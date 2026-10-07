@@ -1,0 +1,180 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  student
+  admin
+}
+
+enum TopicStatus {
+  not_started
+  in_progress
+  completed
+}
+
+enum SessionStatus {
+  scheduled
+  completed
+  cancelled
+}
+
+enum TestStatus {
+  draft
+  published
+}
+
+model User {
+  id                     Int           @id @default(autoincrement())
+  name                   String        @db.VarChar(120)
+  email                  String        @unique @db.VarChar(255)
+  passwordHash           String        @map("password_hash") @db.VarChar(255)
+  profileImage           String?       @map("profile_image") @db.VarChar(500)
+  role                   UserRole      @default(student)
+  xp                     Int           @default(0)
+  level                  Int           @default(1)
+  studyStreak            Int           @default(0) @map("study_streak")
+  dailyStudyTarget       Int           @default(120) @map("daily_study_target")
+  preferredStudyStart    String        @default("17:00") @map("preferred_study_start") @db.VarChar(5)
+  preferredStudyEnd      String        @default("21:00") @map("preferred_study_end") @db.VarChar(5)
+  lastStudyDate          DateTime?     @map("last_study_date") @db.Date
+  createdAt              DateTime      @default(now()) @map("created_at")
+  updatedAt              DateTime      @updatedAt @map("updated_at")
+  subjects               Subject[]
+  studySessions          StudySession[]
+  achievements           UserAchievement[]
+  testAttempts           TestAttempt[]
+  @@map("users")
+}
+
+model Subject {
+  id                Int      @id @default(autoincrement())
+  userId            Int      @map("user_id")
+  name              String   @db.VarChar(120)
+  description       String?  @db.Text
+  color             String   @default("#4f46e5") @db.VarChar(7)
+  icon              String   @default("📘") @db.VarChar(16)
+  examDate          DateTime? @map("exam_date") @db.Date
+  targetCompletion  Int      @default(100) @map("target_completion")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topics            Topic[]
+  studySessions     StudySession[]
+  tests             MockTest[]
+  @@unique([userId, name])
+  @@index([userId, examDate])
+  @@map("subjects")
+}
+
+model Topic {
+  id                       Int         @id @default(autoincrement())
+  subjectId                Int         @map("subject_id")
+  name                     String      @db.VarChar(160)
+  description              String?     @db.Text
+  difficulty               Int         @default(3)
+  importance               Int         @default(3)
+  estimatedMinutes         Int         @default(60) @map("estimated_minutes")
+  understandingPercentage  Int         @default(0) @map("understanding_percentage")
+  status                   TopicStatus @default(not_started)
+  nextRevisionAt           DateTime?   @map("next_revision_at")
+  createdAt                DateTime    @default(now()) @map("created_at")
+  updatedAt                DateTime    @updatedAt @map("updated_at")
+  subject                  Subject     @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  studySessions            StudySession[]
+  @@unique([subjectId, name])
+  @@index([subjectId, status])
+  @@index([nextRevisionAt])
+  @@map("topics")
+}
+
+model StudySession {
+  id          Int           @id @default(autoincrement())
+  userId      Int           @map("user_id")
+  subjectId   Int           @map("subject_id")
+  topicId     Int?          @map("topic_id")
+  title       String        @db.VarChar(180)
+  notes       String?       @db.Text
+  scheduledAt DateTime      @map("scheduled_at")
+  durationMinutes Int       @map("duration_minutes")
+  actualMinutes Int?        @map("actual_minutes")
+  status      SessionStatus @default(scheduled)
+  completedAt DateTime?     @map("completed_at")
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject     Subject       @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  topic       Topic?        @relation(fields: [topicId], references: [id], onDelete: SetNull)
+  @@index([userId, scheduledAt])
+  @@index([subjectId, status])
+  @@map("study_sessions")
+}
+
+model MockTest {
+  id          Int          @id @default(autoincrement())
+  subjectId   Int          @map("subject_id")
+  title       String       @db.VarChar(180)
+  description String?      @db.Text
+  durationMinutes Int      @map("duration_minutes")
+  status      TestStatus   @default(published)
+  createdAt   DateTime     @default(now()) @map("created_at")
+  subject     Subject      @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  questions   TestQuestion[]
+  attempts    TestAttempt[]
+  @@index([subjectId, status])
+  @@map("mock_tests")
+}
+
+model TestQuestion {
+  id          Int      @id @default(autoincrement())
+  testId      Int      @map("test_id")
+  prompt      String   @db.Text
+  options     Json
+  answerIndex Int      @map("answer_index")
+  explanation String?  @db.Text
+  points      Int      @default(1)
+  test        MockTest @relation(fields: [testId], references: [id], onDelete: Cascade)
+  @@index([testId])
+  @@map("test_questions")
+}
+
+model TestAttempt {
+  id            Int       @id @default(autoincrement())
+  userId        Int       @map("user_id")
+  testId        Int       @map("test_id")
+  answers       Json
+  score         Int
+  totalPoints   Int       @map("total_points")
+  completedAt   DateTime  @default(now()) @map("completed_at")
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  test          MockTest  @relation(fields: [testId], references: [id], onDelete: Cascade)
+  @@index([userId, completedAt])
+  @@map("test_attempts")
+}
+
+model Achievement {
+  id          Int                @id @default(autoincrement())
+  code        String             @unique @db.VarChar(60)
+  name        String             @db.VarChar(120)
+  description String             @db.VarChar(255)
+  icon        String             @db.VarChar(16)
+  xpReward    Int                @default(0) @map("xp_reward")
+  users       UserAchievement[]
+  @@map("achievements")
+}
+
+model UserAchievement {
+  userId        Int         @map("user_id")
+  achievementId Int         @map("achievement_id")
+  earnedAt      DateTime    @default(now()) @map("earned_at")
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement  Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+  @@id([userId, achievementId])
+  @@index([achievementId])
+  @@map("user_achievements")
+}

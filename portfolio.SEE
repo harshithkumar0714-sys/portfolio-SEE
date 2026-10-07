@@ -1,1 +1,60 @@
+#  Smart Study Planner
+
+Smart Study Planner is an AI-powered study management application designed to help students organize their academic activities and make better use of their study time.
+
+## Problem Statement
+
+Students often struggle to manage their study time effectively because of multiple subjects, assignments, exams, and other activities. Creating a proper study timetable and maintaining consistency can be difficult.
+
+##  Our Solution
+
+Smart Study Planner provides a simple and organized platform where students can create study plans based on their subjects, goals, available time, and priorities.
+
+##  Key Features
+
+*  Create and manage personalized study schedules
+* Set daily and academic goals
+*  Manage study tasks and assignments
+*  Organize study time efficiently
+*  Track study progress
+*  Get reminders for important tasks
+*  AI-based study planning and recommendations
+*  Organize subjects and learning activities
+*  Monitor productivity and completion status
+*  Simple and user-friendly interface
+
+##  Technologies Used
+
+* HTML
+* CSS
+* JavaScript
+* AI-based features
+* Git & GitHub
+* VS Code
+
+##  Objective
+
+The main objective of Smart Study Planner is to help students build better study habits, manage their academic workload, stay organized, and achieve their learning goals through smart and personalized planning.
+
+## Target Users
+
+* School students
+* College students
+* University students
+* Competitive exam aspirants
+* Anyone who wants to organize their learning schedule
+
+##  Future Improvements
+
+* Personalized AI study recommendations
+* Mobile application
+* Advanced progress analytics
+* Calendar integration
+* Exam preparation mode
+* Automatic timetable generation
+* Voice-based study assistance
+
+##  Project Status
+
+This project was developed as a hackathon project and demonstrates how AI and smart planning can be used to improve students' learning and time-management experience.
 

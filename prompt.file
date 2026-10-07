@@ -1,0 +1,537 @@
+# FIRST SCREEN — LOGIN / AUTHENTICATION
+
+Make the **Login page the very first page** users see when opening SmartStudy.
+
+Users must NOT directly see the Dashboard before logging in.
+
+## 1. LOGIN PAGE
+
+Create a modern, premium 2026-style login screen.
+
+App name:
+
+**SmartStudy**
+
+Tagline:
+
+**"Plan smarter. Study better. Complete everything."**
+
+Layout:
+
+Left side:
+
+* SmartStudy logo
+* Short description
+* Illustration or subtle academic graphic
+* Features:
+
+  * AI Study Planner
+  * Smart Exam Preparation
+  * Assignment Tracking
+  * AI Study Assistant
+
+Right side:
+
+* Login card
+
+Login fields:
+
+Email
+Password
+
+Buttons:
+
+**Login**
+
+**Continue with Google**
+
+Links:
+
+**Forgot Password?**
+
+**Don't have an account? Create Account**
+
+Keep the design professional and academic, not gaming-style.
+
+---
+
+# 2. REGISTER PAGE
+
+When the user clicks **Create Account**, show registration.
+
+Fields:
+
+Full Name
+Email
+Password
+Confirm Password
+
+Academic information:
+
+Branch:
+
+* CSE
+* AI & Data Science
+* AI & ML
+* ISE
+* IT
+* ECE
+* EEE
+* EIE
+* Mechanical
+* Civil
+* Aerospace
+* Automobile
+* Chemical
+* Biotechnology
+* Biomedical
+* Robotics & Automation
+* Mechatronics
+* Industrial
+* Environmental
+* Mining
+* Petroleum
+* Agricultural
+* Marine
+* Metallurgical
+* Other
+
+Semester:
+
+1
+2
+3
+4
+5
+6
+7
+8
+
+College / University
+
+Optional:
+Profile photo
+
+Button:
+
+**Create Account**
+
+After successful registration:
+
+Register
+→ Automatically log in
+→ Open onboarding
+→ Select subjects
+→ Set study preferences
+→ Open Dashboard
+
+---
+
+# 3. FORGOT PASSWORD
+
+Create a proper Forgot Password page.
+
+Flow:
+
+Forgot Password
+→ Enter Email
+→ Send Reset Link
+→ Reset Password
+→ Login
+
+Show proper success/error messages.
+
+Do not reveal whether an email exists in the database through error messages.
+
+---
+
+# 4. AUTHENTICATION BACKEND
+
+Use the existing Flask + SQLAlchemy backend.
+
+Create secure authentication.
+
+Database:
+
+users
+
+Fields:
+
+id
+full_name
+email
+password_hash
+branch
+semester
+college
+profile_image
+created_at
+updated_at
+is_active
+
+Never store plain-text passwords.
+
+Use secure password hashing such as Werkzeug password hashing.
+
+---
+
+# 5. SESSION / TOKEN AUTHENTICATION
+
+Implement secure authentication.
+
+Use either:
+
+Secure HTTP-only session cookies
+
+OR
+
+JWT authentication.
+
+Prefer secure HTTP-only cookies for the normal web application.
+
+Protect all private API endpoints.
+
+Example:
+
+/api/dashboard
+/api/subjects
+/api/assignments
+/api/exams
+/api/tests
+/api/planner
+/api/analytics
+/api/ai/*
+
+These endpoints must require authentication.
+
+Unauthenticated users should receive:
+
+401 Unauthorized
+
+---
+
+# 6. ROUTE PROTECTION
+
+The frontend must check authentication when the application loads.
+
+If user is NOT logged in:
+
+Show:
+
+**Login Page**
+
+If user IS logged in:
+
+Show:
+
+**Dashboard**
+
+Protected routes:
+
+/dashboard
+/subjects
+/syllabus
+/planner
+/assignments
+/exams
+/coding-tests
+/practice-tests
+/labs
+/projects
+/calendar
+/timer
+/analytics
+/achievements
+/profile
+/settings
+
+Unauthenticated users must not be able to access these pages directly by typing the URL.
+
+---
+
+# 7. LOGOUT
+
+Add a logout button in the profile menu.
+
+Logout flow:
+
+Click Logout
+→ Clear authentication session
+→ Clear sensitive client-side authentication data
+→ Redirect to Login
+
+After logout, pressing the browser Back button must not expose private dashboard data.
+
+---
+
+# 8. PROFILE MENU
+
+After login, show the user's profile in the navigation bar.
+
+Example:
+
+JS Vignnesh
+AI & Data Science
+Semester 3
+
+Profile menu:
+
+Profile
+Settings
+AI Settings
+Logout
+
+---
+
+# 9. REMEMBER LOGIN
+
+Add:
+
+**Remember me**
+
+If enabled, keep the user authenticated securely according to the chosen session strategy.
+
+Do not store passwords in localStorage.
+
+Do not store sensitive authentication tokens in insecure browser storage if HTTP-only cookies are being used.
+
+---
+
+# 10. LOGIN VALIDATION
+
+Validate:
+
+Email format
+Required fields
+Password length
+Correct credentials
+
+Show friendly messages:
+
+"Please enter your email."
+
+"Please enter your password."
+
+"Invalid email or password."
+
+"Your account has been created successfully."
+
+"Password reset link sent."
+
+Do not expose technical backend errors to the user.
+
+---
+
+# 11. LOGIN LOADING STATE
+
+When Login is clicked:
+
+Disable the button temporarily.
+
+Show:
+
+**Signing you in...**
+
+After success:
+
+Redirect smoothly to Dashboard.
+
+Prevent duplicate login requests.
+
+---
+
+# 12. SECURITY
+
+Implement:
+
+Password hashing
+Input validation
+SQL injection protection
+Authentication middleware
+Authorization checks
+Secure cookies
+CSRF protection where applicable
+Rate limiting for login attempts
+Proper session expiration
+Logout invalidation
+Generic authentication error messages
+
+Never expose:
+
+Passwords
+Password hashes
+API keys
+AI provider keys
+Authentication secrets
+
+to the frontend.
+
+---
+
+# 13. AI FEATURES AFTER LOGIN
+
+All AI features must be available only after authentication.
+
+The AI should know the authenticated student's:
+
+* Name
+* Branch
+* Semester
+* Subjects
+* Syllabus
+* Assignments
+* Exams
+* Coding tests
+* Practice tests
+* Labs
+* Projects
+* Study sessions
+* Performance
+* Weak topics
+
+Example after login:
+
+**Good morning, Vignnesh 👋**
+
+"Your DBMS exam is in 5 days. Based on your recent performance, I recommend spending 45 minutes on Normalization today."
+
+Do not show personal academic information before login.
+
+---
+
+# 14. FIRST-TIME USER ONBOARDING
+
+After first successful registration, do not immediately dump the user onto a blank dashboard.
+
+Show:
+
+### Welcome to SmartStudy 🎓
+
+**Let's personalize your study system.**
+
+Step 1:
+Select Branch
+
+Step 2:
+Select Semester
+
+Step 3:
+Choose Subjects
+
+Step 4:
+Set Available Study Hours
+
+Step 5:
+Set Preferred Study Time
+
+Step 6:
+Add Upcoming Exams
+
+Step 7:
+Add Assignments
+
+Step 8:
+Enable AI Study Assistant
+
+Button:
+
+**Create My Study Plan**
+
+Then generate the first personalized dashboard.
+
+---
+
+# 15. LOGIN-FIRST APPLICATION FLOW
+
+The complete application flow should be:
+
+OPEN SMARTSTUDY
+
+↓
+
+Check Authentication
+
+↓
+
+If NOT logged in:
+
+LOGIN PAGE
+
+↓
+
+Register / Login
+
+↓
+
+First-time user?
+
+YES → ONBOARDING
+
+NO → DASHBOARD
+
+↓
+
+DASHBOARD
+
+↓
+
+AI Study Coach
+Subjects
+Syllabus
+Assignments
+Exams
+Coding Tests
+Practice Tests
+Labs
+Projects
+Study Planner
+Calendar
+Timer
+Analytics
+Achievements
+Profile
+Settings
+
+---
+
+# 16. UI REQUIREMENTS
+
+The login page must look like a real professional SaaS product.
+
+Use:
+
+* Clean typography
+* Rounded cards
+* Good spacing
+* Responsive layout
+* Subtle animations
+* Light/dark mode support
+* Mobile-friendly design
+* Accessible form labels
+* Password visibility toggle
+* Keyboard-friendly navigation
+* Proper focus states
+* Attractive academic illustration
+
+Do NOT make it look like:
+
+* An arcade game
+* A gaming dashboard
+* An overly futuristic neon interface
+* A simple HTML form
+
+The first impression should feel like a polished **AI-powered engineering education platform**.
+
+---
+
+# IMPORTANT
+
+The application must always start with authentication.
+
+**Login → Authentication → Onboarding/Dashboard**
+
+Never:
+
+**Open website → Dashboard**
+
+All existing SmartStudy AI features should remain intact after authentication.
